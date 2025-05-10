@@ -1,0 +1,95 @@
+-- Örnek 1: ROW_NUMBER() ile Genel Sıralama
+-- Açıklama: Calisanlar tablosundaki çalışanları maaşlarına göre en yüksekten en düşüğe sıralayarak genel bir sıra numarası atar.
+SELECT
+    CalisanID,
+    Departman,
+    Maas,
+    ROW_NUMBER() OVER (ORDER BY Maas DESC) as GenelMaasSirasi
+FROM
+    Calisanlar;
+
+-- Örnek 2: ROW_NUMBER() ile Departman İçi Sıralama (PARTITION BY)
+-- Açıklama: Çalışanları departmanlarına göre gruplandırır ve her departman içinde maaşlarına göre sıralayarak departman içi sıra numarası atar.
+SELECT
+    CalisanID,
+    Departman,
+    Maas,
+    ROW_NUMBER() OVER (PARTITION BY Departman ORDER BY Maas DESC) as DepartmanIciMaasSirasi
+FROM
+    Calisanlar;
+
+-- Örnek 3: RANK() ile Genel Sıralama (Eşit Değerlerde Boşluk Bırakır)
+-- Açıklama: Çalışanları maaşlarına göre sıralar. Aynı maaşa sahip çalışanlar aynı sırayı alır ve sonraki sıra numarası atlanır.
+SELECT
+    CalisanID,
+    Departman,
+    Maas,
+    RANK() OVER (ORDER BY Maas DESC) as GenelMaasRank
+FROM
+    Calisanlar;
+
+-- Örnek 4: DENSE_RANK() ile Genel Sıralama (Eşit Değerlerde Boşluk Bırakmaz)
+-- Açıklama: Çalışanları maaşlarına göre sıralar. Aynı maaşa sahip çalışanlar aynı sırayı alır ancak sonraki sıra numarası atlanmaz.
+SELECT
+    CalisanID,
+    Departman,
+    Maas,
+    DENSE_RANK() OVER (ORDER BY Maas DESC) as GenelMaasDenseRank
+FROM
+    Calisanlar;
+
+-- Örnek 5: RANK() ile Departman İçi Sıralama (PARTITION BY)
+-- Açıklama: Çalışanları departmanlarına göre gruplandırır ve her departman içinde maaşlarına göre sıralar. Aynı maaşa sahip çalışanlar aynı sırayı alır ve sonraki sıra numarası atlanır.
+SELECT
+    CalisanID,
+    Departman,
+    Maas,
+    RANK() OVER (PARTITION BY Departman ORDER BY Maas DESC) as DepartmanIciMaasRank
+FROM
+    Calisanlar;
+
+-- Örnek 6: DENSE_RANK() ile Departman İçi Sıralama (PARTITION BY)
+-- Açıklama: Çalışanları departmanlarına göre gruplandırır ve her departman içinde maaşlarına göre sıralar. Aynı maaşa sahip çalışanlar aynı sırayı alır ancak sonraki sıra numarası atlanmaz.
+SELECT
+    CalisanID,
+    Departman,
+    Maas,
+    DENSE_RANK() OVER (PARTITION BY Departman ORDER BY Maas DESC) as DepartmanIciMaasDenseRank
+FROM
+    Calisanlar;
+-- Örnek 7: LAG() ile Önceki Satış Değerini Getirme
+-- Açıklama: Satislar tablosunda, satışları tarihe göre sıralayarak her satış kaydının bir önceki günün satış tutarını getirir.
+SELECT
+    SatisTarihi,
+    SatisTutari,
+    LAG(SatisTutari, 1) OVER (ORDER BY SatisTarihi) as OncekiGunSatisTutari
+FROM
+    Satislar;
+-- Örnek 8: LEAD() ile Sonraki Satış Değerini Getirme
+-- Açıklama: Satislar tablosunda, satışları tarihe göre sıralayarak her satış kaydının bir sonraki günün satış tutarını getirir.
+SELECT
+    SatisTarihi,
+    SatisTutari,
+   LEAD(SatisTutari, 1) OVER (ORDER BY SatisTarihi) as SonrakiGunSatisTutari
+FROM
+    Satislar;
+
+-- Örnek 9: SUM() OVER() ile Kümülatif Toplam Hesaplama
+-- Açıklama: Satislar tablosunda, satışları tarihe göre sıralayarak kümülatif toplam satış tutarını hesaplar.
+SELECT
+    SatisTarihi,
+    SatisTutari,
+    SUM(SatisTutari) OVER (ORDER BY SatisTarihi) as KumulatifSatisTutari
+FROM
+    Satislar;
+
+-- Örnek 10: AVG() OVER(PARTITION BY ...) ile Bölüm Bazında Ortalama Notu Getirme
+-- Açıklama: Ogrenciler tablosunda, her öğrencinin kaydının yanında kendi bölümündeki öğrencilerin ortalama notunu getirir.
+SELECT
+    OgrenciID,
+    Bolum,
+    NotOrtalamasi,
+    AVG(NotOrtalamasi) OVER (PARTITION BY Bolum) as BolumOrtalamaNotu
+FROM
+    Ogrenciler;
+
